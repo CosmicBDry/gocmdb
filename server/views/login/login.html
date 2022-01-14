@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Main CSS-->
+    {{ assets_css "/static/css/main.css" }}
+    <!-- Font-icon css-->
+    {{ assets_css "/static/plugins/Font-Awesome-4.7.0/css/font-awesome.min.css" }}
+    <title>{{ config "String" "appname" "CMDBsvc" }}</title>
+  </head>
+  <body>
+    <section class="material-half-bg">
+      <div class="cover"></div>
+    </section>
+    <section class="login-content">
+      <div class="logo">
+        <h1>财务管理系统</h1>
+      </div>
+      <div class="login-box">
+        <form class="login-form" action="{{ urlfor `AuthController.Login` }}"   method="POST">
+         <!-- <input type="hidden" name="_xsrf" value="{{ .xsrf_token }}"/>-->
+         <input type="hidden" name="_xsrf" value="{{ ._xsrf }}"/>
+          <h3 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>登录</h3>
+          <div class="form-group">
+            <label class="control-label">用户名</label>
+            <input class="form-control {{ if .error }}is-invalid{{end}}" type="text" name="username" value="{{ .form.Name }}" placeholder="用户名" autofocus>
+          </div>
+          <div class="form-group">
+            <label class="control-label">密码</label>
+            <input class="form-control {{if .error }}is-invalid{{ end }}" type="password" name="password" placeholder="密码">
+            {{ if .error }}
+            <div class="form-controller-feedback text-danger">
+                {{ index .error 0 }}
+            </div>
+            {{ end }}
+          </div>
+          <div class="form-group btn-container">
+            <button class="btn btn-primary btn-block"><i class="fa fa-sign-in fa-lg fa-fw"></i>登录</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </body>
+</html>

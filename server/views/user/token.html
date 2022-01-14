@@ -1,0 +1,30 @@
+<table  class="table ">
+    <thead>
+        <tr class=" container-fluid row ">
+            <th class="col-5">AccessKey</th>
+            <th class="col-5">SecretKey</th>
+            <th class="col-2">操作</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        <input type="hidden"  class="token-xsrf-class" name="_xsrf" value="{{ ._xsrf }}" />
+        {{ if .usersToken.Token }}
+        <tr class=" container-fluid row ">
+            <td class="col-5">{{  .usersToken.Token.AccessKey }}</td>
+            <td class="col-5">{{  .usersToken.Token.SecretKey }}</td>
+            <td class="col-2"> <a class="btn btn-primary btn-block btn-token"   href="javascript:void(0);" data-pk="{{ .usersToken.Id }}" >更新</a></td>
+        </tr>
+        <tr>
+            <td colspan="2">Usage: 将AccessKey、SecretKey添入以下请求头</br> curl -k -XGET https://.../?param=value  -H  "Authentication: Token"  -H  "AccessKey: ..."  -H  "SecretKey: ..."  <td>
+        </tr>
+        {{ else }}
+        <tr class=" container-fluid row ">
+            <td class="col-10"colspan="2">暂无token</td>                                                           
+            <td class="col-2" > <a class="btn btn-primary btn-token"  href="javascript:void(0);" data-pk="{{ .usersToken.Id }}" >生成</a></td>
+        </tr>
+        {{ end }}
+    </tbody>
+
+
+</table>

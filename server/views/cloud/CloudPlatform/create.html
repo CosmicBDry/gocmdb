@@ -1,0 +1,56 @@
+<form data-url="{{ urlfor `CloudPlatformController.Create` }}" data-callback="reload_UserPageTable">  <!--data-url属性提供给dailog保存按钮获取url -->
+    <input type="hidden" name="_xsrf" value="{{ ._xsrf }}" />    
+    <div class="form-group row">
+        <label for="inputName" class="col-2 col-form-label">名称<span class="text-danger">*</span></label>
+        <div class="col-10">
+          <input type="text" class="form-control" id="inputName" name="name" value="" placeholder="名称">
+          <small class="form-text text-muted">名称长度为5~64字符,且唯一</small>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="inputTypes" class="col-2 col-form-label">类型<span class="text-danger">*</span></label>
+       <div class="col-10" >
+        <select class="form-control" name="types">
+            {{ range $key,$value := .SelectType }}
+            <option  value ="{{ $key }}">{{ $value.Name }}</option>
+            {{ end }}
+        </select>
+        </div>    
+    </div>
+
+    <div class="form-group row">
+        <label for="inputAddr" class="col-2 col-form-label">地址<span class="text-danger">*</span></label>
+        <div class="col-10">
+            <input class="form-control" id="inputAddr"  name="addr" placeholder="地址" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="inputRegion" class="col-2 col-form-label">区域<span class="text-danger">*</span></label>
+        <div class="col-10">
+            <input class="form-control" id="inputRegion"  name="region" placeholder="区域" />
+        </div>
+    </div>
+    
+    <div class="form-group row">
+        <label for=">AccessKey" class="col-2 col-form-label">AccessKey<span class="text-danger">*</span></label>
+        <div class="col-10">
+          <input type="password" class="form-control" id=">AccessKey" name="accesskey" value="" placeholder="AccessKey">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for=">SecretKey" class="col-2 col-form-label">SecretKey<span class="text-danger">*</span></label>
+        <div class="col-10">
+          <input type="password" class="form-control" id=">SecretKey" name="secretkey" value="" placeholder="SecretKey">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="inputRemark" class="col-2 col-form-label">备注</label>
+        <div class="col-10">
+            <textarea class="form-control" id="inputRemark" name="remark"  placeholder="备注" rows=3 ></textarea>
+        </div>
+    </div>
+
+    
+</form>

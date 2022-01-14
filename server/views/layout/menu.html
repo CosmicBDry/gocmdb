@@ -1,0 +1,17 @@
+<li><a class="app-menu__item  {{ if eq .menu `Dashboard` }}active{{end}}" href="javascript:void(0);"><i class="app-menu__icon fa fa-university"></i><span class="app-menu__label">Dashboard</span></a></li>
+
+{{ if eq .user.Id 1 }}
+<li class="treeview {{ if eq .expand `CloudManager` }}is-expanded{{ end }}"><a class="app-menu__item " href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cloud"></i><span class="app-menu__label">云管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+    <ul class="treeview-menu">
+            <li><a class="treeview-item {{ if eq .menu `CloudPlatformManager`}}active{{ end }}" href="{{ urlfor `CloudPlatformPageController.Index` }}"><i class="icon fa fa-cubes"></i> 云平台管理</a></li>
+            <li><a class="treeview-item {{ if eq .menu `VirtualMachineManager`}}active{{ end }}" href="{{ urlfor `VirtualMachinePageController.Index` }}"><i class="icon fa fa-server"></i>虚拟主机管理</a></li>
+    </ul>
+</li>
+{{ end }}
+
+<li class="treeview {{ if eq .expand `SystemManager` }}is-expanded{{ end }}"><a class="app-menu__item " href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cogs"></i><span class="app-menu__label">系统管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+    <ul class="treeview-menu">
+            <li><a class="treeview-item {{ if eq .menu `UserManager`}}active{{ end }}" href="{{ urlfor `UserPageController.Index` }}"><i class="icon fa fa-user-circle"></i> 用户管理</a></li>
+            <li><a class="treeview-item" href="javascript:void(0);"><i class="icon fa fa-bell"></i> 告警管理</a></li>
+    </ul>
+</li>

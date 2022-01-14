@@ -1,0 +1,173 @@
+<script type="text/javascript">
+  
+jQuery(document).ready(function(){
+
+    var UserPageTable = jQuery("#table").DataTable({
+        dom:  '<"row"<"col-6"l><"col-5"f><"#buttons.col-1">>tip',
+        serverSide: true,
+        searching: true,
+        ordering: true,
+        ajax: {
+            url: "{{ urlfor `UserController.List`}}",
+            type: "GET",
+            dataSrc: "result",
+            data: function(data){
+               // console.log(data);
+                return{
+                   draw: data.draw,
+                   start: data.start,
+                   length: data.length,
+                   colName: data.columns[data.order[0]["column"]].name,
+                   colSort: data.order[0]["dir"],
+                   searchvalue: data.search["value"]
+                }
+                
+            }
+        },
+        columns: [
+            {
+                name: "name",
+                data: function(row){  
+                    return htmlEncode(row["name"])
+            }},
+            {
+                name:"gender",
+                data: function(row){
+                    if (row["gender"]==0){
+                        return htmlEncode("女")
+                    }else if (row["gender"]==1){
+                        return htmlEncode("男")
+                    }
+                    
+                },
+                orderable: false
+                
+            },
+                
+            {
+                name:"birthday",
+                data: function(row){
+                    return htmlEncode(row["birthday"]).split("T")[0]
+                   
+                },
+                orderable: false
+            },
+                
+            {
+                name:"tel",
+                data: function(row){
+                    return htmlEncode(row["tel"])
+                },
+                orderable: false
+            },
+            {
+                name:"email",
+                data: function(row){
+                    return htmlEncode(row.email)
+                }},
+            {
+                name:"addr",
+                data: function(row){
+                    return htmlEncode(row.addr)
+                }},
+                {
+                name:"status",
+                data: function(row){
+
+                    if(row.status == 1){
+                        return htmlEncode("锁定")
+                    }else if(row.status == 0){
+                        return htmlEncode("活动")
+                    }else{
+                        return htmlEncode("异常")
+                    }
+                   
+                }},
+            {   
+                name: "remark",
+                data: function(row){
+                    return htmlEncode(row.remark)
+                },
+                orderable: false
+            },
+            {
+                name: "created_time",
+                data: function(row){
+                    return htmlEncode(row["created_time"])
+                }},
+            {
+                name: "updated_time",
+                data: function(row){
+                    return htmlEncode(row["updated_time"])
+                }},
+            {data: function(row){
+               
+               //以下的data-pk=":pk:"，其中的:pk:为占位
+                
+               console.log("currentUserId",jQuery("#currentUserId").html())
+
+                if( row.id == "{{ .user.Id}}" ){  //若判断为当前用户，则隐藏掉锁定、解锁、删除等按钮,user.Id为后端LoginController 传入当前登录的用户 c.Data["user"]=users
+
+                    var buttons = '<div class="btn-group mr-2" role="group" >' + 
+                    '<button type="button" class="btn btn-info btn-dailog-open" data-url="{{ urlfor `UserController.Modify` }}?pk='+ row.id +'" data-title="编辑">编辑</button>'+
+                    '<button type="button" class="btn btn-secondry btn-dailog-open" data-callback="reload_UserPageTable" data-title="Token" data-content="token提供于api接口访问" data-cancel="取消token访问"  data-look="look" data-url="{{ urlfor `UserController.Token`}}?pk=:pk:">Token</button>'+
+                    '</div>'
+                     
+                }else{
+                    var buttons = '<div class="btn-group mr-2" role="group" >' + 
+                    '<button type="button" class="btn btn-info btn-dailog-open" data-url="{{ urlfor `UserController.Modify` }}?pk='+ row.id +'" data-title="编辑">编辑</button>'+
+                    '<button type="button" class="btn btn-warning btn-control-class" data-callback="reload_UserPageTable" data-title="确认锁定吗?" data-content="用户将被锁定" data-cancel="已取消锁定"data-url="{{ urlfor `UserController.Lock`}}" data-pk=":pk:" >锁定</button>'+
+                    '<button type="button" class="btn btn-success btn-control-class" data-callback="reload_UserPageTable" data-title="确认解锁吗?" data-content="用户将被解锁" data-cancel="已取消解锁操作"data-url="{{ urlfor `UserController.UnLock`}}" data-pk=":pk:" >解锁</button>'+
+                    '<button type="button" class="btn btn-danger btn-control-class" data-callback="reload_UserPageTable" data-title="确认删除吗?" data-content="删除将无法恢复" data-cancel="已取消删除此用户"data-url="{{ urlfor `UserController.Delete`}}" data-pk=":pk:" >删除</button>'+
+                    '</div>'      
+
+                }
+                    
+                return buttons.replace(/:pk:/g,row["id"])//替换掉全部的:pk:
+    
+            },
+            orderable: false
+        
+        }
+        ]
+    });
+
+ 
+   
+    UserPageTable.on("draw",function(){
+       
+        if (!jQuery("#buttons").attr("inited")){
+            //console.log("draw button")
+            jQuery("#buttons").attr("inited","sucess").html('<a class="btn btn-sm btn-outline-primary btn-block btn-dailog-open" data-title="新建" data-url="{{ urlfor `UserController.Create`}}" href="javascript:void(0);">新建</a>')
+        }
+    });
+
+    
+    //新建、编辑、锁定、解锁等js代码执行完后，回调以下函数，进行主机面的table表刷新
+    window["reload_UserPageTable"]= function(reponse){
+        //console.log("6. exec window reload")
+        UserPageTable.ajax.reload(null,false)////ajax自带的刷新，ajax.reload( callback, resetPaging )：null为不回调函数，false为当前页刷新
+    }
+   
+
+
+
+ 
+   jQuery(".dailog-body-class").on("click",".btn-token",function(){   
+        var pk = jQuery(this).data("pk")
+        var xsrf = jQuery(".token-xsrf-class").val()
+        //console.log("post1111 请求已完成")
+        ajaxRequest("POST","{{ urlfor `UserController.Token`}}",{pk: pk,_xsrf: xsrf},"",function(response){
+
+           jQuery(".dailog-body-class").load("{{ urlfor `UserController.Token`}}?pk="+pk)
+
+
+        })
+
+   });
+
+
+
+});
+
+</script>

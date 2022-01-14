@@ -1,0 +1,79 @@
+<form data-url="{{ urlfor `UserController.Create` }}" data-callback="reload_UserPageTable">  <!--data-url属性提供给dailog保存按钮获取url -->
+    <input type="hidden" name="_xsrf" value="{{ ._xsrf }}" />
+    <div class="form-group row">
+        <label for="inputName" class="col-2 col-form-label">用户名<span class="text-danger">*</span></label>
+        <div class="col-10">
+          <input type="text" class="form-control" id="inputName" name="name" value="" placeholder="用户名">
+          <small class="form-text text-muted">用户名长度为5~32字符,且唯一</small>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="inputPassword" class="col-2 col-form-label">密码<span class="text-danger">*</span></label>
+        <div class="col-10">
+          <input type="password" class="form-control" id="inputPassword" name="password" placeholder="密码">
+          <small class="form-text text-muted">密码长度为9~16位</small>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="inputPassword1" class="col-2 col-form-label">密码确认<span class="text-danger">*</span></label>
+        <div class="col-10">
+          <input type="password" class="form-control" id="inputPassword1" name="confirmpassword" placeholder="再次确认">
+          <small class="form-text text-muted">必须与上一次输入内容相同</small>
+        </div>
+    </div>
+    <div class="row form-group">
+        <label class="col-2 col-form-label">性别<span class="text-danger">*</span></label>
+        <div class="col-10">
+            <div class="col-1 custom-control custom-radio custom-control-inline">
+                <input type="radio" id="customRadioInline1" name="gender" value="1" class="custom-control-input" checked=checked>
+                <label class="custom-control-label" for="customRadioInline1">男</label>
+            </div>
+    
+            <div class="col-1 custom-control custom-radio custom-control-inline">
+                <input type="radio" id="customRadioInline2" name="gender" value="0" class="custom-control-input" >
+                <label class="custom-control-label" for="customRadioInline2">女</label>
+            </div>
+
+        </div>
+    </div>
+   
+    <div class="form-group row">
+        <label for="birthday" class="col-2 col-form-label">出生日期<span class="text-danger">*</span></label>
+        <div class="col-10">
+          <input type="text" class="form-control" id="birthday" name="birthday" value="" placeholder="生日">
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label for="inputTel" class="col-2 col-form-label">联系电话</label>
+        <div class="col-10">
+          <input type="text" class="form-control" id="inputTel" name="tel" value="" placeholder="联系方式">
+          <small class="form-text text-muted">必须输入有效的号码</small>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="inputEmail" class="col-2 col-form-label">邮箱</label>
+        <div class="col-10">
+          <input type="text" class="form-control" id="inputEmail" name="email" value="" placeholder="邮箱地址">
+          <small class="form-text text-muted">example@example.cn</small>
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label for="inputAddr" class="col-2 col-form-label">住址</label>
+        <div class="col-10">
+            <textarea class="form-control" id="inputAddr"  name="addr" placeholder="输入地址.." rows=3 ></textarea>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="inputRemark" class="col-2 col-form-label">备注</label>
+        <div class="col-10">
+            <textarea class="form-control" id="inputRemark" name="remark"  placeholder="备注..." rows=3 ></textarea>
+        </div>
+    </div>
+</form>

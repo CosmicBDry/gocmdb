@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ config "String" "appname" "CMDB"  }}</title>
+    {{ assets_css "/static/css/main.css" }}
+    {{ assets_css "/static/plugins/Font-Awesome-4.7.0/css/font-awesome.min.css"  }}
+    {{ assets_css "/static/css/adjust.css" }}
+    {{ assets_css "/static/plugins/jquery-ui-1.13.0/jquery-ui.min.css" }}
+    {{ assets_css "/static/plugins/sweetalert-1.1.1/dist/sweetalert.css" }}
+    <!--{{ assets_css "/static/plugins/bootstrap-datepicker-1.8.0/dist/css/bootstrap-datepicker.min.css" }}-->
+    {{ .LayoutStyle }}
+    <style type="text/css">
+      div.dailog-body-class{
+        min-height: 100px;
+        max-height: 500px;
+        min-width:500px;
+        max-width:800px; 
+        overflow-y: auto;/* 显示页面滚轮 */
+      }
+    </style>
+  </head>
+  <body class="app sidebar-mini rtl sidenav-toggled">
+    <!-- Navbar-->
+    <header class="app-header"><a class="app-header__logo" href="{{ urlfor `UserPageController.Index`}}">{{ config "String" "appname" "CMDB"  }}</a>
+      <!-- Sidebar toggle button--><a class="app-sidebar__toggle" href="#"  data-toggle="sidebar" aria-label="Hide Sidebar"></a>
+      <!-- Navbar Right Menu-->
+      <ul class="app-nav">
+        <li class="app-search">
+          <div class="text-nowrap bd-highlight font-weight-bold  text-monospace ">
+            <div>当前用户: {{ .user.Name }}</div>
+          </div>
+        </li>
+        
+        {{ template "layout/notification.html" . }}
+  
+        <!-- User Menu-->
+        <li class="dropdown"><a class="app-nav__item" href="#" data-toggle="dropdown" aria-label="Open Profile Menu"><i class="fa fa-user fa-lg"></i></a>
+          <ul class="dropdown-menu settings-menu dropdown-menu-right">
+            <li><a class="dropdown-item" href="javascript:void(0);"><i class="fa fa-user fa-lg"></i> 密码修改</a></li>
+            <li><a class="dropdown-item" href="{{ urlfor `AuthController.Logout`}}"><i class="fa fa-sign-out fa-lg"></i>退出</a></li>
+          </ul>
+        </li>
+      </ul>
+    </header>
+
+    <!-- Sidebar menu-->
+    <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+    <aside class="app-sidebar aside-padding-top"> 
+      <ul class="app-menu">
+        {{ template "layout/menu.html" . }}
+      </ul>
+    </aside>
+    <main class="app-content">
+      {{ .LayoutContent }}
+    </main>
+    {{ template "layout/dailog.html" }}
+
+    {{ assets_js "/static/js/jquery-3.2.1.min.js" }}
+    {{ assets_js "/static/js/popper.min.js" }}
+    {{ assets_js "/static/js/bootstrap.min.js" }}
+    {{ assets_js "/static/js/main.js" }}
+    {{ assets_js "/static/js/plugins/pace.min.js" }}
+    <!--{{ assets_js "/static/js/plugins/chart.js" }}-->
+    {{ assets_js "/static/js/plugins/jquery.dataTables.min.js" }}
+    {{ assets_js "/static/js/plugins/dataTables.bootstrap.min.js" }}
+    {{ assets_js "/static/plugins/jquery.cookie-1.4.1.min.js" }}
+    {{ assets_js "/static/plugins/jquery.base64.js" }}
+    {{ assets_js "/static/plugins/sweetalert-1.1.1/dist/sweetalert.min.js" }}
+    
+    {{ assets_js "/static/js/utils.js" }}
+    <!--{{ assets_js "/static/plugins/jquery-ui-1.13.0/jquery-ui.min.js" }}-->
+    {{ assets_js "/static/plugins/bootstrap-datepicker-1.8.0/dist/js/bootstrap-datepicker.min.js" }}
+    {{ assets_js "/static/plugins/bootstrap-datepicker-1.8.0/dist/locales/bootstrap-datepicker.zh-CN.min.js" }}
+    {{ assets_js "/static/plugins/bootstrap-notify-3.1.3/dist/bootstrap-notify.min.js"  }}
+    <!--{{ assets_js "/static/plugins/jquery-dateFormat-1.0.2/dist/dateFormat.min.js" }}-->
+    {{ assets_js "/static/plugins/jquery-dateFormat-1.0.2/dist/jquery-dateFormat.min.js" }}
+    {{ assets_js "/static/js/plugins/select2.min.js" }}
+    <!-- 如下是js默认的全局配置-->
+    <script type="text/javascript">
+      jQuery(document).ready(function(){
+        jQuery.extend($.fn.dataTable.defaults,{
+          language: {
+            url: "/static/json/datatable-chinese.json"
+          },
+          searching: false,
+          ordering: false,
+        })
+      })
+    </script>
+    {{ template "layout/dailog-js.html" }}
+    {{ template "layout/datepicker-js.html" }}
+    {{ template "layout/control-js.html" }}
+    {{ .LayoutScript }}
+  </body>
+</html>

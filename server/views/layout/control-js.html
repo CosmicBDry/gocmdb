@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        jQuery("#table").on("click",".btn-control-class",function(){
+           var url = jQuery(this).data("url")
+           var pk = jQuery(this).data("pk")
+           var title = jQuery(this).data("title")
+           var content = jQuery(this).data("content")
+           var  cancelcontent = jQuery(this).data("cancel")
+           var callbackfunc = jQuery(this).data("callback")
+          /* if(pk == jQuery("#currentUserId").html()){//禁止当前用户锁定、解锁、删除自己
+
+            swal("操作禁止！","不可锁定、解锁、删除当前用户","warning");
+            return
+           }*/
+
+           jQuery(".dailog-body-class").load(url,function(response){
+           var xsrfToken  =  jQuery(".get-xsrf-class").val()
+           // console.log("xsrfToken",xsrfToken)
+            
+            swal({
+                title: title,
+                text: content,
+                showCancelButton: true,   //告警对话框中显示 取消按钮,确认按钮默认是显示的
+                confirmButtonText: '确认', //确认按钮标签
+                cancelButtonText:'取消',  //取消按钮标签
+                closeOnConfirm: false, //是否通过确认按钮来关闭对话框
+                closeOnCancel: false 
+            },
+            function(isConfirm){
+                if(isConfirm){
+                    ajaxRequest("POST",url,{pk: pk},xsrfToken,function(response){
+                       
+                        if(callbackfunc && callbackfunc in window && typeof(window[callbackfunc]) == "function" ){
+                            window[callbackfunc](response)
+                        }
+                     })  
+                }else{
+
+                    swal("撤销！",cancelcontent,"error");
+
+                }            
+            },"json");
+  
+           })
+
+
+
+        })
+
+    })
+
+
+
+
+</script>

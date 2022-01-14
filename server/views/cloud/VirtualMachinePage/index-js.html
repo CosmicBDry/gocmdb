@@ -1,0 +1,186 @@
+<script type="text/javascript">
+  
+    jQuery(document).ready(function(){
+    
+        var UserPageTable = jQuery("#table").DataTable({
+            dom:  '<"row"<"col-3"l><"col-6"f><"#buttons.col-2">>tip',
+            serverSide: true,
+            searching: true,
+            ordering: true,
+            ajax: {
+                url: "{{ urlfor `VirtualMachinePageController.List`}}",
+                type: "GET",
+                dataSrc: "result",
+                data: function(data){
+                   // console.log(data);
+                    return{
+                       draw: data.draw,
+                       start: data.start,
+                       length: data.length,
+                       colName: data.columns[data.order[0]["column"]].name,
+                       colSort: data.order[0]["dir"],
+                       searchvalue: data.search["value"],
+                       platform: jQuery("select.js-select-class").val()
+                    }
+                    
+                }
+            },
+            columns: [
+                {
+                    name: "name",
+                    data: function(row){  
+                        return htmlEncode(row["name"])
+                }}, 
+                
+                {
+                    name:"status",
+                    data: function(row){
+                            return htmlEncode(row["status"])       
+                    }},
+
+                {
+                    name:"instance_id",
+                    data: function(row){
+                        return htmlEncode(row["instance_id"])
+                       
+                    },
+                    orderable: false
+                },
+
+                {
+                    name: "cloud_platform_name",
+                    data: function(row){
+                        return htmlEncode(row.cloud_platform.name)
+                       
+                    },
+                    orderable: false
+                },
+
+                {
+                    name:"mem"+"/"+"cpu",
+                    data: function(row){
+                            return htmlEncode(row["mem"]+"MB"+"/"+row["cpu"]+"c")       
+                    },
+                    orderable: false
+                },   
+
+                {
+                    name:"os",
+                    data: function(row){
+                            return htmlEncode(row["os"])       
+                    },
+                    orderable: false
+                },
+
+
+                {
+                    name:"public_addrs"+ "/" +"private_addrs",
+                    data: function(row){
+                            return htmlEncode(row["public_addrs"] + "/" +row["private_addrs"]   )       
+                    },
+                    orderable: false
+                },
+
+                {   
+                    name: "remark",
+                    data: function(row){
+                        return htmlEncode(row.remark)
+                    },
+                    orderable: false
+                },
+
+                {
+                    name:"vm_created_time",
+                    data: function(row){
+                       
+                        //return htmlEncode(jQuery.format.date(row["vm_created_time"],"yyyy-MM-dd hh:mm:ss a")) 
+                        // return htmlEncode(jQuery.format.toBrowserTimeZone(row["vm_created_time"]))
+                        return htmlEncode(jQuery.format.toBrowserTimeZone(row["vm_created_time"],"yyyy-MM-dd hh:mm:ss a"))
+                }},
+
+
+                {data: function(row){
+                        var buttons = '<div class="btn-group mr-2" role="group" >' + 
+                        '<button type="button" class="btn btn-warning btn-control-class" data-callback="reload_UserPageTable" data-title="确认启动吗?" data-content="即将启动" data-cancel="已取消操作"data-url="{{ urlfor `VirtualMachineController.Start`}}" data-pk=":pk:" >启动</button>'+ 
+                        '<button type="button" class="btn btn-warning btn-control-class" data-callback="reload_UserPageTable" data-title="确认关闭实例吗?" data-content="即将关闭" data-cancel="已取消操作"data-url="{{ urlfor `VirtualMachineController.Stop`}}" data-pk=":pk:" >关机</button>'+
+                        '<button type="button" class="btn btn-success btn-control-class" data-callback="reload_UserPageTable" data-title="确认重启实例吗?" data-content="即将重启" data-cancel="已取消操作"data-url="{{ urlfor `VirtualMachineController.Reboot`}}" data-pk=":pk:" >重启</button>'+
+                        '<button type="button" class="btn btn-danger btn-control-class" data-callback="reload_UserPageTable" data-title="确认删除吗?" data-content="逻辑删除可恢复" data-cancel="已取消删除"data-url="{{ urlfor `VirtualMachineController.Delete`}}" data-pk=":pk:" >删除</button>'+
+                        '<button type="button" class="btn btn-danger btn-control-class" data-callback="reload_UserPageTable" data-title="确认销毁吗?" data-content="销毁后不可恢复" data-cancel="已取消销毁操作"data-url="{{ urlfor `VirtualMachineController.Terminate`}}" data-pk=":pk:" >销毁</button>'+
+                        '</div>'      
+                    return buttons.replace(/:pk:/g,row["id"])
+                },
+                orderable: false
+                }
+            ]
+        });
+    
+     
+       
+        UserPageTable.on("draw",function(){
+           
+            if (!jQuery("#buttons").attr("inited")){
+                //console.log("draw button")
+                jQuery("#buttons").attr("inited","sucess").html('<form ><div class="form-group row"><label class="col-form-label col-form-label-sm col-sm-4 text-right">云平台:</label><div class="col-8 "><select class="form-control form-control-sm  js-select-class"></select></div></div></form>')
+            }
+            jQuery("select.js-select-class").select2({
+                ajax: {
+                    url:'{{ urlfor `CloudPlatformController.List`}}',
+                    data: function(params){
+                        return {
+                            querySearch: params.term  //params.term为select框中返回的查询参数,使得后端可获取此参数
+                        };
+
+                    },
+                    processResults: function(response){//processResults用于自定义处理后端发送过来的响应的结果
+                        var results = []
+
+                        if (response["code"] == 200){
+                            results.push(
+                                {
+                                    id: -1,
+                                    text: "全部"
+                                }
+                            ),
+                            jQuery.each(response["result"],function(index,value){
+                                results.push({
+                                    id: value["id"],
+                                    text: value["name"]
+                                })
+                            })
+                        }
+                        return {
+                            results: results
+                        }
+                    }
+                }
+            })
+            
+        });   
+    
+
+//监听云平台select2下拉框中一有内容变化则进行前端ajax页面刷新，因每次ajax刷新能触发datatable提交参数
+        jQuery(document).on("change","select.js-select-class",function(){
+
+            UserPageTable.ajax.reload(null,false);
+
+        })
+      
+        
+//window的ajax页面刷新函数，此函数提供与回调函数进行调用
+        window["reload_UserPageTable"]= function(reponse){
+          
+            UserPageTable.ajax.reload(null,false)
+        }
+       
+
+//ajax前端页面的间隔刷新
+       setInterval(function(){
+            UserPageTable.ajax.reload(null,false);
+
+        },10*1000)
+
+
+    
+    });
+    
+    </script>

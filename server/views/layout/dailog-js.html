@@ -1,0 +1,56 @@
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        jQuery(document).on("click",".btn-dailog-open",function(){
+            var url = jQuery(this).data("url")
+            var title = jQuery(this).data("title")
+            
+            
+            var lookToken= jQuery(this).data("look")
+            if (lookToken =="look"){
+                    jQuery(".btn-save-class").hide()
+                 } else {
+                    jQuery(".btn-save-class").show()
+                 }
+
+            jQuery(".dailog-body-class").load(url,function(response){
+               
+                var dailog = jQuery(".dailog-class")
+                dailog.find(".dailog-title-class").html(title)
+                
+                dailog.modal({
+                    show: true,
+                    backdrop: false,
+                    keyboard: false
+               })
+            })
+        });
+
+
+        jQuery(".btn-save-class").on("click",function(){
+          // console.log("1. click commit")
+           var form = jQuery("form")
+           var url = form.data("url")
+           var data = form.serializeArray();
+           var callbackfunc = form.data("callback")
+
+           //console.log("form.serializeArray",data)
+            ajaxRequest("POST",url,data,"",function(response){
+                
+               //console.log("4. callback current function")
+              
+            jQuery(".dailog-class").modal("hide")//创建完成后自动关闭dailog对话框
+            if (callbackfunc && callbackfunc in window&& typeof(window[callbackfunc]) == "function" ){
+                //console.log("5. call window reload function")
+                window[callbackfunc](response)
+            }
+            });
+        });
+
+        window["reload_UserPageTable"]= function(reponse){
+        //console.log("6. exec window reload")
+        UserPageTable.ajax.reload(null,false)////ajax自带的刷新，ajax.reload( callback, resetPaging )：null为不回调函数，false为当前页刷新
+   }
+
+        
+    });
+</script>

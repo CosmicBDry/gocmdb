@@ -1,0 +1,138 @@
+<script type="text/javascript">
+  
+    jQuery(document).ready(function(){
+    
+        var UserPageTable = jQuery("#table").DataTable({
+            dom:  '<"row"<"col-6"l><"col-5"f><"#buttons.col-1">>tip',
+            serverSide: true,
+            searching: true,
+            ordering: true,
+            ajax: {
+                url: "{{ urlfor `CloudPlatformController.List`}}",
+                type: "GET",
+                dataSrc: "result",
+                data: function(data){
+                   // console.log(data);
+                    return{
+                       draw: data.draw,
+                       start: data.start,
+                       length: data.length,
+                       colName: data.columns[data.order[0]["column"]].name,
+                       colSort: data.order[0]["dir"],
+                       searchvalue: data.search["value"]
+                    }
+                    
+                }
+            },
+            columns: [
+                {
+                    name: "name",
+                    data: function(row){  
+                        return htmlEncode(row["name"])
+                }},
+                {
+                    name:"types",
+                    data: function(row){  
+                        if (row["types"]== "tencentCloud")  {
+                            return htmlEncode("腾讯云")
+                        } else if (row["types"]== "aliyun")  {
+                            return htmlEncode("阿里云")
+                        } else if (row["types"]== "huaweicloud")  {
+                            return htmlEncode("华为云")
+                        }
+                     
+                }},
+                    
+                {
+                    name:"region",
+                    data: function(row){
+                        return htmlEncode(row["region"])
+                       
+                    }
+                },
+                   
+                {   
+                    name: "remark",
+                    data: function(row){
+                        return htmlEncode(row.remark)
+                    },
+                    orderable: false
+                },
+
+                {
+                    name:"created_time",
+                    data: function(row){
+                           
+                            return htmlEncode(jQuery.format.date(row["created_time"],"yyyy-MM-dd hh:mm:ss ")) //a代表AM/PM
+                      
+                      
+                        //return htmlEncode(row["created_time"])
+                    }
+                },
+                {
+                    name:"sync_time",
+                    data: function(row){
+                       
+                            if(row["sync_time"] == null){
+                               return htmlEncode("无")
+                            }else{
+                                return htmlEncode(jQuery.format.date(row["sync_time"],"yyyy-MM-dd hh:mm:ss a"))
+                            }
+                    }},
+
+                    {
+                    name:"status",
+                    data: function(row){
+    
+                        if(row.status == 1){
+                            return htmlEncode("禁用")
+                        }else if(row.status == 0){
+                            return htmlEncode("启用")
+                        }else{
+                            return htmlEncode("异常")
+                        }
+                       
+                    }},
+             
+                {data: function(row){
+                        var buttons = '<div class="btn-group mr-2" role="group" >' + 
+                        '<button type="button" class="btn btn-info btn-dailog-open" data-url="{{ urlfor `CloudPlatformController.Modify` }}?pk='+ row.id +'" data-title="编辑">编辑</button>'+
+                        '<button type="button" class="btn btn-warning btn-control-class" data-callback="reload_UserPageTable" data-title="确认禁用吗?" data-content="将被禁用" data-cancel="已取消禁用"data-url="{{ urlfor `CloudPlatformController.Disable`}}" data-pk=":pk:" >禁用</button>'+
+                        '<button type="button" class="btn btn-success btn-control-class" data-callback="reload_UserPageTable" data-title="确认启用吗?" data-content="将被启用" data-cancel="已取消启用"data-url="{{ urlfor `CloudPlatformController.Enable`}}" data-pk=":pk:" >启用</button>'+
+                        '<button type="button" class="btn btn-danger btn-control-class" data-callback="reload_UserPageTable" data-title="确认删除吗?" data-content="删除将无法恢复" data-cancel="已取消删除"data-url="{{ urlfor `CloudPlatformController.Delete`}}" data-pk=":pk:" >删除</button>'+
+                        '</div>'      
+                    return buttons.replace(/:pk:/g,row["id"])
+                },
+                orderable: false
+                }
+            ]
+        });
+    
+     
+       
+        UserPageTable.on("draw",function(){
+           
+            if (!jQuery("#buttons").attr("inited")){
+                //console.log("draw button")
+                jQuery("#buttons").attr("inited","sucess").html('<a class="btn btn-sm btn-outline-primary btn-block btn-dailog-open" data-title="新建" data-url="{{ urlfor `CloudPlatformController.Create`}}" href="javascript:void(0);">新建</a>')
+            }
+        });
+    
+      
+        window["reload_UserPageTable"]= function(reponse){
+          
+            UserPageTable.ajax.reload(null,false)
+        }
+       
+        setInterval(function(){
+
+            UserPageTable.ajax.reload(null,false)
+
+        },5*1000)
+ 
+        
+
+
+    });
+    
+    </script>
