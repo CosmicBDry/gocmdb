@@ -216,6 +216,19 @@ func (t *TokenManager) GetByKey(accesskey, secretkey string) *Token {
 	return nil
 }
 
+func (t *TokenManager) GetByGitlabToken(gitToken string) *Token {
+	token := &Token{AccessKey: gitToken}
+	ormer := orm.NewOrm()
+	if err := ormer.Read(token, "AccessKey"); err == nil {
+
+		ormer.LoadRelated(token, "User") //通过ormer.LoadRelated来启用token表和user的关联关系
+		//token.User.Id 从而可以直接通过token表来访问user表中的内容
+		return token
+	}
+
+	return nil
+}
+
 func (t *TokenManager) GencertToken(users *User) string {
 	tokenUser := &Token{User: users}
 	ormer := orm.NewOrm()

@@ -1,0 +1,20 @@
+<!--{{ template "layout/codemirror-css.html" }}--> <!-- 引入的codemirror编辑器的css-->
+  <form data-url="{{  urlfor `AgentOperationController.Modify` }}" data-callback="reload_AlertPageTable" data-format="edit-codemirror-yaml">
+    <div>
+        <input type="hidden"  name=id value="{{ .AgentForm.Id }}"/>
+    </div>
+    <div class="form-group row">
+        <label class="col-2 col-form-label" for="Config-codemirror">Configure</label>
+        <div class="col-10">
+        <textarea  type="text" class=" form-control" id="Config-codemirror" name="config" >{{ .AgentForm.Config }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-2 col-form-label" for="configversions">ConfigVersion</label>
+        <div class="col-5">
+        <input  class="form-control" id="configversions" readonly name="configversion" value="{{ .AgentForm.ConfigVersion }}"/>
+        </div>
+    </div>   
+</form>
+<!-- {{ template "layout/codemirror-js.html" }}--><!-- 引入的codemirror编辑器的js-->

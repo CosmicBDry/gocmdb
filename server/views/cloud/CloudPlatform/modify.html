@@ -13,7 +13,7 @@
        <div class="col-10" >
         <select class="form-control" name="types">
 
-          <!-- {{ if .CloudPlatform }} <option  value ="{{ .CloudPlatform.Types }}" selected>{{ .SelectType $value.Name }}</option>-->
+        
             {{ range $key,$value := .SelectType }}
             <option  value ="{{ $key }}" >{{ $value.Name }}</option>
             {{ end }}

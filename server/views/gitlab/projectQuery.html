@@ -1,0 +1,50 @@
+<form>    
+    <div class="form-group row">
+        <label class="col-2 col-form-label">当前版本</label>
+        <div class="col-8">
+          <input type="text" class="form-control " readonly value="{{ .gitProject.CurrentVersion }}">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-2 col-form-label">上一版本</label>
+        <div class="col-8">
+          <input type="text" class="form-control " readonly value="{{ .gitProject.LastVersion }}" >
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-form-label col-2">描述</label>
+        <div class="col-8">
+            <input class="form-control " type="text" readonly value="{{ .gitProject.Description }}" />
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-form-label col-2">提交者</label>
+        <div class="col-8">
+            <input class="form-control"  readonly type="text" value="{{ .gitProject.Author }}"/>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-form-label col-2">提交时间</label>
+        <div class="col-8">
+            <input class="form-control" readonly type="text" value="{{ .gitProject.CommitTime }}" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-form-label col-2">项目git地址</label>
+        <div class="col-8">
+            <input class="form-control"  readonly type="text" value="{{ .gitProject.SShUrl }}" />
+        </div>
+    </div>
+
+
+
+
+
+
+</form>

@@ -32,62 +32,82 @@ function ajaxRequest(method,url,params,xsrfToken,callback){
                 }       
       
             },
-            success: function(response){
-                
+            success: function(response){//success的function两个参数，function(data,textStatus);为服务端响应的data、状态信息如”error“，二个参数可以只用一个参数
+                console.log(response)
                 switch(response["code"]){
                     case 200:
                     // console.log("3. ajaxRequest success")
                         //callback(response);//只有调用此callback函数，dailog-js.html中的引入的function(response)才能生效
                         //alert("成功");
 
-                        swal("操作成功！",response["text"],"success")
-                        jQuery.notify({    
-                            title: 'CMDB管理系统：',
-                            icon:"/static/image/title.jpg",
-                            message: response["text"]
-                        },
-                        {
-                            type: "success",
-                            icon_type:"image"
-                        
-                        })
-                        
-                        // UserPageTables.ajax.reload(null,false);//ajax自带的刷新，ajax.reload( callback, resetPaging )：null表示不回调函数，false表示刷新不重置到第一页
-                        callback(response);//只有调用此callback函数，dailog-js.html中的引入的function(response)才能生效
-
+                       // swal("操作成功！",response["text"],"success")
+                       
+                                jQuery.notify({    
+                                    title: 'CMDB管理系统：',
+                                    icon:"/static/image/title.jpg",
+                                    message: response["text"]
+                                },
+                                {
+                                    type: "success",
+                                    icon_type:"image"
+                                
+                                });
+                        // GitlabPageTables.ajax.reload(null,false);//ajax自带的刷新，ajax.reload( callback, resetPaging )：null表示不回调函数，false表示刷新不重置到第一页
+                       callback(response);//只有调用此callback函数，dailog-js.html中的引入的function(response)才能生效
                         break;//中断继续
                     
                     case 304:
-                        swal("提示！",response.result[0].Message,"info")
+                        var info = []
+                        jQuery.each(response["result"],function(index,value){
+                            info.push(value["Message"])
+                        })
+                        if(info.length==0){
+                            info.push(response["text"])
+                         } 
+                        swal("提示！",info,"info")
                         break;
+                  
+                    
+                }
+            },
+            error: function(response){// error的function中有三个参数func(xmlhttpRequest,textStatus,errorThrown)，三个参数可以只用一个参数
+                //xmlhttpRequest请求对象中含有字段reponseJSON，用于接收服务器响应的json信息，两外两参数textStatus,errorThrown基本用不上
+              // console.log(response)
+                console.log(response)
+                switch(response.responseJSON.code){
                     case 400:
                         var errors = []
-                        jQuery.each(response["result"],function(index,value){
+                        jQuery.each(response.responseJSON.result,function(index,value){
                             errors.push(value["Message"])
                         });
-                       // console.log("hahah",errors)
+                      
                         if(errors.length == 0){
-                            errors.push(response["text"])  
+                            errors.push(response.responseJSON.text)  
                         }
+                        /* jQuery.notify({    
+                            title: 'CMDB管理系统：',
+                            icon:"/static/image/title.jpg",
+                            message: errors
+                        },
+                        {
+                            type: "warning",
+                            icon_type:"image"
+                        
+                        });*/
                         swal("出错了！",errors,"error");
-
-                        //alert(errors.join("\n"));
                         break;
                     case 403:
-                        swal("操作禁止！",response["text"],"warning")
+                        swal("操作禁止！",response.responseJSON.text,"warning")
                         break;
                     case 500:
-                        alert("服务器崩溃");
+                        swal("服务器故障！",response.responseJSON.text,"error")
                         break;
                     default:
-                        alert("未知错误");
+                        swal("未知错误！","服务端或客户端错误","error")
                         break;
                 }
+
             },
             dataType: "json"
         })
-
-    
-
- 
 }

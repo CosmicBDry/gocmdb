@@ -1,0 +1,75 @@
+<script type="text/javascript">
+  
+    jQuery(document).ready(function(){
+        var AlertPageTable = jQuery("#table").DataTable({
+            serverSide: true,
+            searching: true,
+            ordering: true,
+            ajax: {
+                url: "{{ urlfor `AgentPageController.List`}}",
+                type: "GET",
+                dataSrc: "results",
+                data: function(data){
+                   // console.log(data);
+                    return{
+                       draw: data.draw,
+                       start: data.start,
+                       length: data.length,
+                       colName: data.columns[data.order[0]["column"]].name,
+                       colSort: data.order[0]["dir"],
+                       searchvalue: data.search["value"]
+                    }
+                    
+                }
+            },
+            columns: [
+                {
+                    name: "hostname",
+                    data: function(row){  
+                        return htmlEncode(row["hostname"])
+                }},
+                {
+                    name:"uuid",
+                    data: function(row){
+                        return htmlEncode(row["uuid"])
+                       
+                }},
+                {
+                    name:"addr",
+                    data: function(row){
+                        return htmlEncode(row["addr"])
+                       
+                }},    
+            
+                {   
+                    name: "heartbeat",
+                    data: function(row){
+                        return htmlEncode(jQuery.format.date(row.heartbeat,"yyyy-MM-dd hh:mm:ss a"))
+                }},
+
+                {
+                    data: function(row){
+
+                        return '<button class="btn btn-sm btn-primary btn-dailog-open" data-title="编辑配置"  data-url="{{ urlfor `AgentOperationController.Modify` }}?pk='+row.id+'">配置</button>'+
+                               '<button class="btn btn-sm btn-danger btn-control-class" data-title="确认删除吗?" data-callback="reload_AlertPageTable" data-content="删除操作请慎重" data-cancel="已取消删除" data-url="{{ urlfor `AgentPageController.Delete` }}" data-pk='+row.id+'>删除</button>'
+                    },
+                    orderable: false
+                }
+            ]
+        });
+    
+      
+        window["reload_AlertPageTable"]= function(reponse){
+          
+            AlertPageTable.ajax.reload(null,false)
+        }
+       
+        /*setInterval(function(){
+
+            AlertPageTable.ajax.reload(null,false)
+
+        },10*1000)*/
+ 
+    });
+    
+    </script>

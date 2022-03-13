@@ -12,7 +12,7 @@ import (
 	"github.com/astaxie/beego/validation"
 )
 
-//session插件
+//session插件------------------------------------------------------------------>
 type Session struct {
 }
 
@@ -20,8 +20,12 @@ func (s *Session) Name() string {
 	return "session"
 }
 
+//Is方法判断是否为session认证类型
 func (s *Session) Is(c *context.Context) bool {
-	return c.Input.Header("Authentication") == ""
+	_, ok1 := c.Request.Header["Authentication"]
+	_, ok2 := c.Request.Header["X-Gitlab-Token"]
+	return !ok1 && !ok2
+	//	return c.Input.Header("Authentication") == ""
 }
 
 func (s *Session) Login(c *AuthController) bool {
@@ -66,10 +70,9 @@ func (s *Session) GoToLogin(c *LoginRequireController) {
 	c.Redirect(c.URLFor(beego.AppConfig.String("Login")), http.StatusFound)
 }
 
+//Token插件------------------------------------------------------------------>
 type Token struct {
 }
-
-//Token插件
 
 func (t *Token) Name() string {
 
@@ -118,7 +121,59 @@ func (s *Token) GoToLogin(c *LoginRequireController) {
 	c.ServeJSON()
 }
 
+//gitlabToken插件------------------------------------------------------------------>
+type GitlabToken struct {
+}
+
+func (g *GitlabToken) Name() string {
+	return "GitlabToken"
+}
+func (g *GitlabToken) Is(ctx *context.Context) bool {
+	_, ok := ctx.Request.Header["X-Gitlab-Token"]
+	return ok
+}
+
+func (g *GitlabToken) IsLogin(c *LoginRequireController) *models.User {
+
+	gitToken := strings.TrimSpace(c.Ctx.Input.Header("X-Gitlab-Token"))
+	if token := models.DefaultTokenManager.GetByGitlabToken(gitToken); token != nil {
+		return token.User
+	}
+	return nil
+
+}
+
+func (g *GitlabToken) Login(c *AuthController) bool {
+	json := map[string]interface{}{
+		"code":   400,
+		"result": "该请求路径为非Token验证方式!",
+	}
+	c.Data["json"] = json
+	c.ServeJSON()
+	return false
+}
+
+func (g *GitlabToken) Logout(c *AuthController) {
+	json := map[string]interface{}{
+		"code":   400,
+		"result": "该请求路径为非Token验证方式!",
+	}
+	c.Data["json"] = json
+	c.ServeJSON()
+
+}
+
+func (g *GitlabToken) GoToLogin(c *LoginRequireController) {
+	json := map[string]interface{}{
+		"code":   403,
+		"result": "没有权限，请提供有效的Token!",
+	}
+	c.Data["json"] = json
+	c.ServeJSON()
+}
+
 func init() {
 	defaultManager.Register(new(Session))
 	defaultManager.Register(new(Token))
+	defaultManager.Register(new(GitlabToken))
 }

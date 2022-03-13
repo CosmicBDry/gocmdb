@@ -20,11 +20,11 @@ type Manager struct {
 
 func NewManager() *Manager {
 	return &Manager{
-		plugin: map[string]AuthPlugin{},
+		plugin: map[string]AuthPlugin{}, //映射初始化，映射只有在初始化下才能被用
 	}
 }
 
-//注册插件，key为插件Name()方法返回的名称，值为插件（有session、token等插件）------------------------->
+//注册插件，key为插件Name()方法返回的名称，值为插件（有session、token、gitlabToken等插件）------------------------->
 func (m *Manager) Register(p AuthPlugin) {
 
 	m.plugin[p.Name()] = p

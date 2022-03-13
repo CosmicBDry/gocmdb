@@ -104,7 +104,7 @@ jQuery(document).ready(function(){
                
                //以下的data-pk=":pk:"，其中的:pk:为占位
                 
-               console.log("currentUserId",jQuery("#currentUserId").html())
+             
 
                 if( row.id == "{{ .user.Id}}" ){  //若判断为当前用户，则隐藏掉锁定、解锁、删除等按钮,user.Id为后端LoginController 传入当前登录的用户 c.Data["user"]=users
 
@@ -121,8 +121,7 @@ jQuery(document).ready(function(){
                     '<button type="button" class="btn btn-danger btn-control-class" data-callback="reload_UserPageTable" data-title="确认删除吗?" data-content="删除将无法恢复" data-cancel="已取消删除此用户"data-url="{{ urlfor `UserController.Delete`}}" data-pk=":pk:" >删除</button>'+
                     '</div>'      
 
-                }
-                    
+                }    
                 return buttons.replace(/:pk:/g,row["id"])//替换掉全部的:pk:
     
             },
@@ -155,9 +154,9 @@ jQuery(document).ready(function(){
  
    jQuery(".dailog-body-class").on("click",".btn-token",function(){   
         var pk = jQuery(this).data("pk")
-        var xsrf = jQuery(".token-xsrf-class").val()
+       // var xsrf = jQuery(".token-xsrf-class").val()   {pk: pk,_xsrf: xsrf}
         //console.log("post1111 请求已完成")
-        ajaxRequest("POST","{{ urlfor `UserController.Token`}}",{pk: pk,_xsrf: xsrf},"",function(response){
+        ajaxRequest("POST","{{ urlfor `UserController.Token`}}",{pk: pk},"",function(response){
 
            jQuery(".dailog-body-class").load("{{ urlfor `UserController.Token`}}?pk="+pk)
 

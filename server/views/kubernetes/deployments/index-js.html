@@ -1,0 +1,102 @@
+    <script type="text/javascript">
+  
+    jQuery(document).ready(function(){
+        var DeploymentPageTable = jQuery("#table").DataTable({
+            dom: '<"row"<"col-6"l><"col-5"f><"#buttons.col-1">>tip',
+            serverSide: true,
+            searching: true,
+            ordering: true,
+            ajax: {
+                url: "{{ urlfor `K8sClusterController.List`}}",
+                type: "GET",
+                dataSrc: "results",
+                data: function(data){
+                   //console.log(data);
+                    return{
+                       draw: data.draw,
+                       start: data.start,
+                       length: data.length
+                      // colName: data.columns[data.order[0]["column"]].name,
+                       //colSort: data.order[0]["dir"],
+                       //searchvalue: data.search["value"]
+                    }
+                    
+                }
+            },
+            columns: [
+                {
+                    name: "app_name",
+                    data: function(row){  
+                        return htmlEncode(row["app_name"])
+                }},
+                {
+                    name:"namespace",
+                    data: function(row){
+                        return htmlEncode(row["namespace"])     
+                }},
+                {
+                    name:"created_time",
+                    data: function(row){
+                        return htmlEncode(row["created_time"])    
+                }},  
+                
+                {
+                    name:"revision_history_limit",
+                    data: function(row){
+                        return htmlEncode(row["revision_history_limit"])
+                    },
+                    orderable: false
+                },
+                {   
+                    name: "total/available",
+                    data: function(row){
+                         return htmlEncode(row["replicas"]+"/"+row["available_replicas"])
+                        
+                }},
+
+                {
+                    data: function(row){
+                        var buttons = '<div class="btn-group mr-2" role="group" >'+
+                        '<button class="btn btn-sm btn-primary btn-dailog-open" data-title="配置"  data-url="{{ urlfor `K8sClusterController.DeploymentModify` }}?pk='+row.namespace+"/"+ row.app_name +'">配置</button>'+
+                        '<button class="btn btn-sm btn-danger btn-control-class" data-title="控制器删除" data-content="删除后不可恢复，是否确认删除？" data-cancel="已取消删除操作" data-callback="reload_DeploymentPageTable" data-url="{{ urlfor `K8sClusterController.DeploymentDelete` }}?pk='+row.namespace+"/"+row.app_name+'">删除</button>'+
+                        '</div>' 
+                        
+                        return buttons
+                    },
+                    orderable: false
+                }
+
+            ]
+        });
+    
+
+       
+        DeploymentPageTable.on("draw",function(){
+           if (!jQuery("#buttons").attr("init")){
+               jQuery("#buttons").attr("init","success").html('<a class="btn btn-sm btn-outline-primary btn-block  btn-dailog-open" data-title="新建控制器" data-url="{{ urlfor `K8sClusterController.DeploymentCreate`}}" href="javascript:void(0);" >新建</a>')
+           }
+        })
+
+
+
+      
+        window["reload_DeploymentPageTable"]= function(reponse){
+          
+            DeploymentPageTable.ajax.reload(null,false)
+        }
+       
+        /*setInterval(function(){
+
+            AlertPageTable.ajax.reload(null,false)
+
+        },10*1000)*/
+
+
+        setInterval(function(){
+            DeploymentPageTable.ajax.reload(null,false)
+        },10*1000)
+
+ 
+    });
+    
+    </script>

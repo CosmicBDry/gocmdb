@@ -1,0 +1,33 @@
+<form>
+    <div class="form-group row">
+        <label class="col-form-label col-2"><strong>Master节点</strong></label>
+        <div class="col-8">
+            <input class="form-control" readonly type="text" value="{{ .gitProject.ReleaseMachine }}" />
+            <small class="text-info">Master节点用于构建编译</small>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-form-label col-2"><strong>后端发布节点</strong></label>
+        <div class="col-8">
+            <textarea class="form-control" readonly rows=3 >{{ .gitProject.BackendHost }}</textarea>
+            <small class="text-info">即将发布的后端节点</small>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-form-label col-2"><strong>项目依赖文件</strong></label>
+        <div class="col-9">
+            <input class="form-control" name="package_file" value="{{ .gitProject.PackageFile }}" readonly />
+            <small class="text-info">项目依赖的配置、目录等必要文件名称</small>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-form-label col-2"><strong>CICD自动化</strong></label>
+        <div class="col-2">
+            <input class="form-control" name="auto_deploy" value="{{ if .gitProject.AutoDeploy }}启用{{ else }}禁用{{ end }}"  readonly/> 
+        </div>
+    </div>
+
+</form>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>testPage</title>
+        <meta charset=utf-8/>
+        {{ template "layout/codemirror-css.html" }}
+    </head>
+    <body>
+        <form>
+            <div class="form-group row ">
+                <label class="col-2 col-form-label" for="Config-codemirror">配置</label>
+                <div class="col-10">
+                    <textarea class="form-control" name="test" id="Config-codemirror"></textarea>
+                </div>
+            </div> 
+
+            <div class="form-group row">
+                <label class="col-2 col-form-label" for="inputJob">jobName</label>
+                <div class="col-10">
+                    <input class="form-control" id="inputJob" type=text name=job />
+                </div>
+           </div>
+           <div>
+               <input  type=submit value="提交"/>
+           </div>
+        </form>
+        {{ assets_js "/static/js/jquery-3.2.1.min.js" }}
+        {{ template "layout/codemirror-js.html" }}
+    </body>
+
+</html>
+
+    
+    
+
+        

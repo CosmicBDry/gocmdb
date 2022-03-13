@@ -1,0 +1,118 @@
+<script type="text/javascript">
+  
+    jQuery(document).ready(function(){
+        var GitlabPageTable = jQuery("#table").DataTable({
+            serverSide: true,
+            searching: true,
+            ordering: true,
+            ajax: {
+                url: "{{ urlfor `GitLabHookController.List`}}",
+                type: "GET",
+                dataSrc: "results",
+                data: function(data){
+                   // console.log(data);
+                    return{
+                       draw: data.draw,
+                       start: data.start,
+                       length: data.length,
+                       colName: data.columns[data.order[0]["column"]].name,
+                       colSort: data.order[0]["dir"],
+                       searchvalue: data.search["value"]
+                    }
+                    
+                }
+            },
+            columns: [
+                {
+                    name: "project_id",
+                    data: function(row){  
+                        return htmlEncode(row["project_id"])
+                }},
+                {
+                    name:"name",
+                    data: function(row){
+                        return htmlEncode(row["name"])     
+                }},
+                {
+                    name:"namespace",
+                    data: function(row){
+                        return htmlEncode(row["namespace"])    
+                }},  
+                
+                {
+                    name:"branch",
+                    data: function(row){
+                        return htmlEncode(row.branch)
+                    },
+                    orderable: false
+                },
+                {   
+                    name: "auto_deploy",
+                    data: function(row){
+                        if(row.auto_deploy == 0){
+                            return htmlEncode("禁用")
+                        }else if(row.auto_deploy == 1){
+                            return htmlEncode("启用")
+                        }else{
+                            return htmlEncode("异常状态")
+                        }    
+                }},
+
+                {
+                    data: function(row){
+                        return '<button class="btn btn-sm btn-primary btn-dailog-open"  data-look="look" data-title="项目查看" data-url="{{ urlfor `GitLabHookController.ProjectQuery` }}?pk='+row.id+'">查看</button>'
+                            
+                    },
+                    orderable: false
+                },
+
+                {
+                    data: function(row){
+                        return '<button class="btn btn-sm btn-primary btn-dailog-open" data-title="发布机器查看"  data-look="look"  data-url="{{ urlfor `GitLabHookController.ReleaseConfigQuery` }}?pk='+row.id+'">查看</button>'+
+                        '<button class="btn btn-sm btn-primary btn-dailog-open" data-title="配置"  data-url="{{ urlfor `GitLabHookController.ReleaseConfigModify` }}?pk='+row.id+'">配置</button>'
+                    },
+                    orderable: false
+                },
+
+                {
+                    data: function(row){
+                        return '<button class="btn btn-sm btn-primary btn-dailog-open"  data-look="look" data-title="构建记录查看" data-url="{{ urlfor `GitLabHookController.Build` }}?pk='+row.id+'">查看</button>'
+                            
+                    },
+                    orderable: false
+                },
+
+
+                {
+                    data: function(row){
+
+                        return '<button class="btn btn-sm btn-primary btn-control-class" data-title="构建" data-content="是否进行代码构建操作？" data-pk='+row.id+' data-url="{{ urlfor `GitLabHookController.Build` }}">构建</button>'+
+                        '<button class="btn btn-sm btn-primary btn-dailog-open" data-title="发布"  data-url="{{ urlfor `GitLabHookController.Relase` }}?pk='+row.id+'">发布</button>'+
+                        '<button class="btn btn-sm btn-primary btn-dailog-open" data-title="回滚"  data-url="{{ urlfor `GitLabHookController.RollBack` }}?pk='+row.id+'">回滚</button>'
+                    },
+                    orderable: false
+                }
+            ]
+        });
+    
+      
+        window["reload_GitlabPageTable"]= function(reponse){
+          
+            GitlabPageTable.ajax.reload(null,false)
+        }
+       
+        /*setInterval(function(){
+
+            AlertPageTable.ajax.reload(null,false)
+
+        },10*1000)*/
+
+
+        setInterval(function(){
+            GitlabPageTable.ajax.reload(null,false)
+        },10*1000)
+
+ 
+    });
+    
+    </script>

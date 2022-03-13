@@ -8,49 +8,69 @@
             var lookToken= jQuery(this).data("look")
             if (lookToken =="look"){
                     jQuery(".btn-save-class").hide()
-                 } else {
+                 }else {
                     jQuery(".btn-save-class").show()
                  }
-
+                 
             jQuery(".dailog-body-class").load(url,function(response){
-               
                 var dailog = jQuery(".dailog-class")
                 dailog.find(".dailog-title-class").html(title)
-                
                 dailog.modal({
                     show: true,
                     backdrop: false,
                     keyboard: false
                })
+               if (jQuery("form").data("format") == "edit-codemirror-yaml"){//判断是否为配置修改html
+                    window.editor = CodeMirror.fromTextArea(//将editor设置为全局windows变量，将dailog中的textarea标签设置为codemirror编辑器
+                        document.getElementById("Config-codemirror"),
+                        {
+                            mode:"yaml-frontmatter",
+                            lineNumbers:true,
+                            styleActiveLine: true,//当前行背景高亮
+                            theme:"midnight",
+                            //border:100,
+                            //height: 200,
+                            
+                        }); 
+                }else if(jQuery("form").data("format") == "look-codemirror-text") {
+                       editor = CodeMirror.fromTextArea(//此时的editor可以不用设置为全局变量
+                       document.getElementById("look-build-codemirror"),
+                        {
+                            mode:"text/html",
+                            lineNumbers:true,
+                            styleActiveLine: true,//当前行背景高亮
+                            theme:"midnight", 
+                        });
+                }       
             })
-        });
 
+        });
+       
 
         jQuery(".btn-save-class").on("click",function(){
-          // console.log("1. click commit")
+         // console.log("1. click commit")
            var form = jQuery("form")
+           if (typeof(editor) != "undefined"){
+            form.find("#Config-codemirror").html(editor.getValue()) //因serializeArray无法直接获取codemirror编辑器中的值，因此通过editor.getValue()获取到codemirror编辑器textarea中的值，在替换到<>
+           }
            var url = form.data("url")
            var data = form.serializeArray();
            var callbackfunc = form.data("callback")
-
-           //console.log("form.serializeArray",data)
             ajaxRequest("POST",url,data,"",function(response){
-                
-               //console.log("4. callback current function")
-              
+               
+                   // console.log("4. callback current function")
+               
+               
             jQuery(".dailog-class").modal("hide")//创建完成后自动关闭dailog对话框
             if (callbackfunc && callbackfunc in window&& typeof(window[callbackfunc]) == "function" ){
-                //console.log("5. call window reload function")
+               // console.log("5. call window reload function")
                 window[callbackfunc](response)
             }
             });
         });
-
-        window["reload_UserPageTable"]= function(reponse){
-        //console.log("6. exec window reload")
-        UserPageTable.ajax.reload(null,false)////ajax自带的刷新，ajax.reload( callback, resetPaging )：null为不回调函数，false为当前页刷新
-   }
-
-        
+        /*window["reload_UserPageTable"]= function(reponse){
+            //console.log("6. exec window reload")
+            UserPageTable.ajax.reload(null,false)////ajax自带的刷新，ajax.reload( callback, resetPaging )：null为不回调函数，false为当前页刷新
+         }*/
     });
 </script>

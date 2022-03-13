@@ -12,6 +12,22 @@
 <li class="treeview {{ if eq .expand `SystemManager` }}is-expanded{{ end }}"><a class="app-menu__item " href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-cogs"></i><span class="app-menu__label">系统管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
     <ul class="treeview-menu">
             <li><a class="treeview-item {{ if eq .menu `UserManager`}}active{{ end }}" href="{{ urlfor `UserPageController.Index` }}"><i class="icon fa fa-user-circle"></i> 用户管理</a></li>
-            <li><a class="treeview-item" href="javascript:void(0);"><i class="icon fa fa-bell"></i> 告警管理</a></li>
+            <li><a class="treeview-item {{ if eq .menu `AlertManager` }}active{{ end }}" href="{{ urlfor `AlertQueryController.Index` }}"><i class="icon fa fa-bell"></i> 告警通知</a></li>
+            <li><a class="treeview-item {{ if eq .menu `AgentManager` }}active{{ end }}" href="{{ urlfor `AgentPageController.Index` }}"><i class="icon fa fa-wrench"></i> prometheus配置</a></li>
     </ul>
 </li>
+
+<li class="treeview {{ if eq .expand `ReleaseManager` }}is-expanded{{ end }}"><a class="app-menu__item " href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-group"></i><span class="app-menu__label">发布管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+    <ul class="treeview-menu">
+            <li><a class="treeview-item " href="javascript:void(0);"><i class="icon fa fa-bug"></i> 测试发布</a></li>
+            <li><a class="treeview-item {{ if eq .menu `ProdRelease`}}active{{ end }}" href="{{ urlfor `GitLabPageController.Index` }}"><i class="icon fa fa-handshake-o"></i> 生产发布</a></li>
+    </ul>
+</li>
+
+<li class="treeview {{ if eq .expand `KubernetesCluster` }}is-expanded{{ end }}"><a class="app-menu__item " href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-ship"></i><span class="app-menu__label">kubernetes集群</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+    <ul class="treeview-menu">
+        <li><a class="treeview-item {{ if eq .menu `DeploymentConfig`}}active{{ end }}" href="{{ urlfor `K8sPageController.DeploymentIndex` }}"><i class="icon fa fa-tasks"></i>Deployment部署</a></li>
+        <li><a class="treeview-item {{ if eq .menu `ServiceConfig`}}active{{ end }} " href="javascript:void(0);"><i class="icon fa fa-bus"></i>Service负载</a></li>    
+    </ul>
+</li>
+
